@@ -9,9 +9,10 @@ namespace GC_Lab_4_Bonus
         {
             do
             {
-                string userInput = GetLowerCaseStringFromUser("Enter in a word: ");
+                string userInput = GetLowerCaseStringFromUser("Enter in a Sentace: ");
 
-                string pigLatin = PigLatanizeWord(userInput);
+
+                string pigLatin = PigLatanizeSentance(userInput);
 
                 Console.WriteLine(pigLatin);
                 Console.WriteLine();
@@ -19,29 +20,60 @@ namespace GC_Lab_4_Bonus
             } while (PromptForLoop("Convert another word? (y/n) \n"));
         }
 
+        private static string PigLatanizeSentance(string sentance)
+        {
+            // Gracefully handle bad input
+            if (string.IsNullOrWhiteSpace(sentance)) return sentance;
+            
+            string output = string.Empty;
+            string[] words = sentance.Split(" ");
+
+            foreach (string word in words)
+            {
+                output += PigLatanizeWord(word);
+                output += " ";
+            }
+
+            return output.Trim();
+        }
+
         private static string PigLatanizeWord(string word)
         {
             // Gracefully handle bad input
             if (string.IsNullOrWhiteSpace(word)) return "";
-            
-            // Don't convert non words
+
+            // Pull out sentance puncuation
+            string sentancePuncuationPattern = @"[\.\?\!\,]";
+            string lastChar = word[word.Length - 1].ToString();
+            string puncuation = string.Empty;
+            if (Regex.IsMatch(lastChar, sentancePuncuationPattern))
+            {
+                puncuation += Regex.Match(lastChar, sentancePuncuationPattern);
+            }
+
+            // Don't convert non words (allows contractions)
             string notAWordPattern = @"[^A-Za-z']";
             if (Regex.IsMatch(word, notAWordPattern)) return word;
 
+            // prep for output stirng
             string output = string.Empty;
             string firstChar = word[0].ToString();
+            string vowelPattern = @"[AaEeIiOoUu]";
 
-            if ("AaEeIiOoUu".Contains(firstChar))
+            // start with vowel if first char
+            if (Regex.IsMatch(firstChar, vowelPattern))
             {
                 output += firstChar;
             }
 
+            // build output string
             for (int i = 1; i < word.Length; i++)
             {
                 output += word[i];
             }
-
-            if ("AaEeIiOoUu".Contains(firstChar))
+            
+            // ending depens on if it is a vowel
+            if (Regex.IsMatch(firstChar, vowelPattern))
             {
                 output += "way";
             }
@@ -50,8 +82,8 @@ namespace GC_Lab_4_Bonus
                 output += firstChar + "ay";
             }
 
-
-            return output;
+            // readd any senance puncuation and return
+            return output + puncuation;
         }
 
         private static string GetLowerCaseStringFromUser(string prompt)
