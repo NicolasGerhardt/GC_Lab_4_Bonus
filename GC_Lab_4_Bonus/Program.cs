@@ -7,9 +7,10 @@ namespace GC_Lab_4_Bonus
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("Welcome to the English to Pig Latin converter!");
             do
             {
-                string userInput = GetLowerCaseStringFromUser("Enter in a Sentace: ");
+                string userInput = GetStringFromUser("Enter in a phrase to be converted\n> ");
 
 
                 string pigLatin = PigLatanizeSentance(userInput);
@@ -17,7 +18,7 @@ namespace GC_Lab_4_Bonus
                 Console.WriteLine(pigLatin);
                 Console.WriteLine();
 
-            } while (PromptForLoop("Convert another word? (y/n) \n"));
+            } while (PromptForLoop("Convert another phrase? (y/n) \n"));
         }
 
         private static string PigLatanizeSentance(string sentance)
@@ -30,11 +31,45 @@ namespace GC_Lab_4_Bonus
 
             foreach (string word in words)
             {
-                output += PigLatanizeWord(word);
-                output += " ";
+                string outputWord = PigLatanizeWord(word.ToLower());
+                if (IsUpperCase(word))
+                {
+                    outputWord = outputWord.ToUpper();
+                }
+                else if (IsTitleCase(word))
+                {
+                    outputWord = TitleCaseWord(outputWord);
+                }
+                
+                
+                output += outputWord + " ";
             }
 
             return output.Trim();
+        }
+
+        private static string TitleCaseWord(string word)
+        {
+            string output = string.Empty;
+            word = word.ToLower();
+            output += word[0].ToString().ToUpper();
+            foreach (char letter in word)
+            {
+                output += letter;
+            }
+            return output;
+        }
+
+        private static bool IsTitleCase(string word)
+        {
+            string upperCasePattern = @"\b[A-Z][a-z']+\b";
+            return Regex.IsMatch(word, upperCasePattern);
+        }
+
+        private static bool IsUpperCase(string word)
+        {
+            string upperCasePattern = @"\b[A-Z]+\b";
+            return Regex.IsMatch(word, upperCasePattern);
         }
 
         private static string PigLatanizeWord(string word)
@@ -86,10 +121,21 @@ namespace GC_Lab_4_Bonus
             return output + puncuation;
         }
 
-        private static string GetLowerCaseStringFromUser(string prompt)
+        private static string GetStringFromUser(string prompt)
         {
-            Console.Write(prompt);
-            return Console.ReadLine().ToLower();
+            while (true)
+            { 
+                Console.Write(prompt);
+                string rawInput = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(rawInput))
+                {
+                    return rawInput;
+                }
+                else
+                {
+                    Console.WriteLine("ERROR: Please enter a word or sentance to be converted.");
+                }
+            }
         }
 
         private static bool PromptForLoop(string prompt)
