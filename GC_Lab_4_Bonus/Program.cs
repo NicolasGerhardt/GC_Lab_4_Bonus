@@ -43,9 +43,7 @@ namespace GC_Lab_4_Bonus
                 if (IsTitleCase(word))
                 {
                     outputWord = TitleCaseWord(outputWord);
-                }
-                
-                if (IsUpperCase(word))
+                } else if (IsUpperCase(word))
                 {
                     outputWord = outputWord.ToUpper();
                 }
