@@ -33,7 +33,7 @@ namespace GC_Lab_4_Bonus
             // Gracefully handle bad input
             if (string.IsNullOrWhiteSpace(sentance)) return sentance;
             
-            string output = string.Empty;
+            string outputSentance = string.Empty;
             string[] words = sentance.Split(" ");
 
             foreach (string word in words)
@@ -43,16 +43,18 @@ namespace GC_Lab_4_Bonus
                 if (IsTitleCase(word))
                 {
                     outputWord = TitleCaseWord(outputWord);
-                } else if (IsUpperCase(word))
+                } 
+                
+                if (IsUpperCase(word))
                 {
                     outputWord = outputWord.ToUpper();
                 }
                 
                 
-                output += outputWord + " ";
+                outputSentance += outputWord + " ";
             }
 
-            return output.Trim();
+            return outputSentance.Trim();
         }
 
         private static string TitleCaseWord(string word)
