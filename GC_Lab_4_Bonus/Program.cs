@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 
 namespace GC_Lab_4_Bonus
 {
@@ -20,7 +21,13 @@ namespace GC_Lab_4_Bonus
 
         private static string PigLatanizeWord(string word)
         {
+            // Gracefully handle bad input
             if (string.IsNullOrWhiteSpace(word)) return "";
+            
+            // Don't convert non words
+            string notAWordPattern = @"[^A-Za-z']";
+            if (Regex.IsMatch(word, notAWordPattern)) return word;
+
             string output = string.Empty;
             string firstChar = word[0].ToString();
 
