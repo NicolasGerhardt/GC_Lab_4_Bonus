@@ -10,13 +10,20 @@ namespace GC_Lab_4_Bonus
             Console.WriteLine("Welcome to the English to Pig Latin converter!");
             do
             {
-                string userInput = GetStringFromUser("Enter in a phrase to be converted\n> ");
-
-
+                string userInput = GetStringFromUser("\nEnter in a phrase to be converted\n> ");
                 string pigLatin = PigLatanizeSentance(userInput);
 
+                var backgroundColor = Console.BackgroundColor;
+                var foregroundColor = Console.ForegroundColor;
+                
+                Console.BackgroundColor = ConsoleColor.Gray;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.WriteLine();
                 Console.WriteLine(pigLatin);
                 Console.WriteLine();
+                Console.BackgroundColor = backgroundColor;
+                Console.ForegroundColor = foregroundColor;
+                
 
             } while (PromptForLoop("Convert another phrase? (y/n) \n"));
         }
@@ -32,13 +39,15 @@ namespace GC_Lab_4_Bonus
             foreach (string word in words)
             {
                 string outputWord = PigLatanizeWord(word.ToLower());
+
+                if (IsTitleCase(word))
+                {
+                    outputWord = TitleCaseWord(outputWord);
+                }
+                
                 if (IsUpperCase(word))
                 {
                     outputWord = outputWord.ToUpper();
-                }
-                else if (IsTitleCase(word))
-                {
-                    outputWord = TitleCaseWord(outputWord);
                 }
                 
                 
@@ -68,7 +77,7 @@ namespace GC_Lab_4_Bonus
 
         private static bool IsUpperCase(string word)
         {
-            string upperCasePattern = @"\b[A-Z]+\b";
+            string upperCasePattern = @"(\b[A-Z]+\'[A-Z]+\b|\b[A-Z][A-Z]+\b)";
             return Regex.IsMatch(word, upperCasePattern);
         }
 
@@ -84,41 +93,37 @@ namespace GC_Lab_4_Bonus
             if (Regex.IsMatch(lastChar, sentancePuncuationPattern))
             {
                 puncuation += Regex.Match(lastChar, sentancePuncuationPattern);
+                word = word.Substring(0, word.Length - 1);
             }
 
             // Don't convert non words (allows contractions)
             string notAWordPattern = @"[^A-Za-z']";
             if (Regex.IsMatch(word, notAWordPattern)) return word;
 
-            // prep for output stirng
-            string output = string.Empty;
-            string firstChar = word[0].ToString();
+            //string firstChar = word[0].ToString();
             string vowelPattern = @"[AaEeIiOoUu]";
-
-            // start with vowel if first char
-            if (Regex.IsMatch(firstChar, vowelPattern))
-            {
-                output += firstChar;
-            }
-
-            // build output string
-            for (int i = 1; i < word.Length; i++)
-            {
-                output += word[i];
-            }
             
-            // ending depens on if it is a vowel
-            if (Regex.IsMatch(firstChar, vowelPattern))
+            int count = 0;
+            bool StartsWithVowel = Regex.IsMatch(word[0].ToString(), vowelPattern);
+            while (!Regex.IsMatch(word[0].ToString(), vowelPattern) && Regex.IsMatch(word, vowelPattern))
             {
-                output += "way";
+                count++;
+                word = word.Substring(1, word.Length - 1) + word[0];
+            }
+
+            
+            if (count == 0 && StartsWithVowel)
+            {
+                word += "way";
             }
             else
             {
-                output += firstChar + "ay";
+                word += "ay";
             }
+            
 
-            // readd any senance puncuation and return
-            return output + puncuation;
+
+            return word + puncuation;
         }
 
         private static string GetStringFromUser(string prompt)
