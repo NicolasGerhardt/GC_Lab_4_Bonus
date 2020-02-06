@@ -62,9 +62,9 @@ namespace GC_Lab_4_Bonus
             string output = string.Empty;
             word = word.ToLower();
             output += word[0].ToString().ToUpper();
-            foreach (char letter in word)
+            for (var i = 1; i < word.Length; i++)
             {
-                output += letter;
+                output += word[i];
             }
             return output;
         }
@@ -98,21 +98,21 @@ namespace GC_Lab_4_Bonus
 
             // Don't convert non words (allows contractions)
             string notAWordPattern = @"[^A-Za-z']";
-            if (Regex.IsMatch(word, notAWordPattern)) return word;
+            if (Regex.IsMatch(word, notAWordPattern)) return word + puncuation;
 
             //string firstChar = word[0].ToString();
             string vowelPattern = @"[AaEeIiOoUu]";
             
-            int count = 0;
+
             bool StartsWithVowel = Regex.IsMatch(word[0].ToString(), vowelPattern);
+
             while (!Regex.IsMatch(word[0].ToString(), vowelPattern) && Regex.IsMatch(word, vowelPattern))
             {
-                count++;
                 word = word.Substring(1, word.Length - 1) + word[0];
             }
 
             
-            if (count == 0 && StartsWithVowel)
+            if (StartsWithVowel)
             {
                 word += "way";
             }
